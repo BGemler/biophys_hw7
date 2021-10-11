@@ -110,15 +110,18 @@ def evaluate_structures(all_parantheses_structures, \
 
 		# find minimum hairpin size in the structure
 		min_hairpin_size = ""
-		seq = structure.split(")")
-		for seq in seq:
-			se = seq.split("(")
-			for s in se:
-				if len(s) > 0:
+		for_index_temp = ""
+		for i in range(len(structure)):
+			s = structure[i]
+			if s == "(":
+				for_index_temp = i
+			elif s == ")":
+				if for_index_temp != "":
+					hairpin_size = i - for_index_temp - 1
 					if min_hairpin_size == "":
-						min_hairpin_size = len(s)
-					if len(s) < min_hairpin_size:
-						min_hairpin_size = len(s)
+						min_hairpin_size = hairpin_size
+					if hairpin_size < min_hairpin_size:
+						min_hairpin_size = hairpin_size
 
 		# ( can't be right next to )
 		no_unallowed_bp_loops = True
@@ -126,8 +129,7 @@ def evaluate_structures(all_parantheses_structures, \
 			first_item = structure[i]
 			second_item = structure[i + 1]
 
-			if first_item == ")" and second_item == "(" or \
-					first_item == "(" and second_item == ")":
+			if first_item == "(" and second_item == ")":
 					no_unallowed_bp_loops = False
 
 		# find base paired energies
